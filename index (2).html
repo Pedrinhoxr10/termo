@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Termo da Bruna</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#efe6dc;--empty:#e0d3c6;--tile:#6f6467;--ink:#2c2427;--key:#d6c8ba;--green:#3aa394;--yellow:#d3ad69;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#6d5b66;--empty:#5a4a53;--tile:#302a2c;--ink:#f6eef1;--key:#4b3f47}}
+:root[data-theme="dark"]{--bg:#6d5b66;--empty:#5a4a53;--tile:#302a2c;--ink:#f6eef1;--key:#4b3f47}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100svh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+section{flex:1;display:flex;flex-direction:column;align-items:center;width:100%;max-width:460px;margin:0 auto;padding:12px 16px 16px;box-sizing:border-box}
+h1{margin:18px 0 26px;font-weight:900;font-size:30px;letter-spacing:.06em;text-align:center}
+h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
+#cards{width:100%}
+.card{width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 18px;margin-bottom:10px;border:0;border-radius:12px;background:var(--tile);color:#fff;font:inherit;font-weight:900;font-size:18px;text-align:left;cursor:pointer}
+.card small{display:block;font-size:13px;letter-spacing:.2em;opacity:.8;margin-top:2px}
+.card b{font-size:20px}
+.card:disabled{opacity:.55;cursor:default}
+.top{width:100%;display:flex;align-items:center;gap:12px;margin-bottom:12px;font-weight:800}
+.top button{font:inherit;font-size:22px;background:none;border:0;color:var(--ink);cursor:pointer;padding:4px 8px}
+#board{display:grid;gap:4px;justify-items:center}
+.r{display:flex;gap:4px}
+.t{width:var(--s);height:var(--s);display:grid;place-items:center;border-radius:5px;background:var(--empty);color:var(--ink);font-style:normal;font-weight:900;font-size:calc(var(--s)*.55);transition:transform .25s}
+.t.f{outline:2px solid var(--ink);outline-offset:-2px}
+.t.g,.kb .g{background:var(--green);color:#fff}
+.t.y,.kb .y{background:var(--yellow);color:#fff}
+.t.x,.kb .x{background:var(--tile);color:#fff}
+.sp{transform:rotateX(90deg)}
+.r.sh{animation:sh .3s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.kb{width:100%;margin-top:auto;padding-top:14px;display:grid;gap:6px}
+.kb div{display:flex;gap:4px;justify-content:center}
+.kb button{flex:1;max-width:38px;height:48px;padding:0;border:0;border-radius:6px;background:var(--key);color:var(--ink);font:inherit;font-weight:800;font-size:15px;cursor:pointer}
+.kb .w{max-width:62px;flex:1.7;font-size:12px}
+#stage{position:relative;width:100%;margin-top:34px}
+.w2{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:4px;transition:transform .9s cubic-bezier(.4,0,.2,1)}
+.q{opacity:0}
+.ring{opacity:0;transition:opacity .9s;text-align:center;margin-top:34px}
+.ring.on{opacity:1}
+.btn{font:inherit;font-weight:900;font-size:18px;color:#fff;background:var(--green);border:0;border-radius:10px;padding:12px 36px;margin-top:16px;cursor:pointer}
+.ring:not(.on){pointer-events:none}
+.btns{display:flex;gap:14px;justify-content:center;margin-top:16px}
+.btns .btn{margin-top:0}
+.btn.no{background:var(--tile);transition:left .25s,top .25s}
+#ov,#yes{position:fixed;inset:0;z-index:5;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.55)}
+#yes{background:var(--bg);text-align:center}
+.card2{background:var(--bg);border-radius:16px;padding:26px 30px;text-align:center;max-width:320px}
+.card2 p{margin:0 0 8px;font-weight:800}
+.big{font-size:64px;line-height:1.1}
+#toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 16px);left:50%;transform:translateX(-50%);z-index:9;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;font-weight:800}
+.cf{position:fixed;top:-14px;width:10px;height:10px;border-radius:2px;animation:fall linear both}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.w2,.ring,.t{transition:none}}
+</style>
+</head>
+<body>
+
+<section id="menu"><h1>TERMO DA BRUNA</h1><div id="cards"></div></section>
+
+<section id="game" hidden>
+  <div class="top"><button id="back" aria-label="Voltar">←</button><span id="info"></span></div>
+  <div id="board"></div>
+  <div class="kb" id="kb"></div>
+</section>
+
+<section id="fin" hidden>
+  <div id="stage"></div>
+  <div class="ring" id="ring">
+    <svg width="120" height="120" viewBox="0 0 120 120" aria-label="Aliança">
+      <circle cx="60" cy="76" r="30" fill="none" stroke="#c99a2e" stroke-width="9"/>
+      <circle cx="60" cy="76" r="30" fill="none" stroke="#f3d580" stroke-width="2" stroke-dasharray="70 120"/>
+      <polygon points="60,20 74,34 60,52 46,34" fill="#bfe9f5" stroke="#fff" stroke-width="2"/>
+      <polyline points="46,34 74,34" stroke="#fff" stroke-width="1.5" fill="none"/>
+    </svg><br>
+    <div class="btns">
+      <button class="btn" id="sim">SIM</button>
+      <div id="nw"><button class="btn no" id="nao">NÃO</button></div>
+    </div>
+  </div>
+</section>
+
+<div id="ov" hidden></div>
+<div id="yes" hidden><h2 style="font-size:34px">Pedro 💚 Bruna</h2></div>
+<div id="toast" hidden></div>
+
+<script>
+/* ===== Configuração =====
+   Para testar: abra o arquivo com ?final (vai direto à tela final) ou ?reset (zera o progresso). */
+const LV=[
+  {w:['URSINHO','FLORES','BEIJO'],ic:['🧸','💐','💋']},
+  {w:['COMIGO','QUER','BRUNA','NAMORAR']}
+];
+const TRIES=9;
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let S={p:[0,0]},G=null;
+function save(){try{localStorage.setItem('tb',JSON.stringify(S))}catch(e){}}
+try{S=JSON.parse(localStorage.getItem('tb'))||S}catch(e){}
+const Q=location.search;
+if(Q.includes('reset')){S={p:[0,0]};save()}
+if(Q.includes('final'))S={p:[3,4]};
+
+const go=id=>['menu','game','fin'].forEach(s=>$('#'+s).hidden=s!=id);
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1300)}
+function score(g,a){
+  const r=Array(a.length).fill('x'),c={};
+  for(let i=0;i<a.length;i++){if(g[i]==a[i])r[i]='g';else c[a[i]]=(c[a[i]]||0)+1}
+  for(let i=0;i<a.length;i++){if(r[i]=='x'&&c[g[i]]>0){r[i]='y';c[g[i]]--}}
+  return r;
+}
+
+/* ===== Menu de níveis ===== */
+function menu(){
+  go('menu');
+  const p=S.p,open=[true,p[0]>=3,p[1]>=4],done=[p[0]>=3,p[1]>=4,false];
+  $('#cards').innerHTML=[0,1,2].map(i=>{
+    const dots=i<2?'●'.repeat(p[i])+'○'.repeat(LV[i].w.length-p[i]):'';
+    return `<button class="card" data-l="${i}" ${open[i]?'':'disabled'}><span>Nível ${i+1}<small>${dots}</small></span><b>${done[i]?'✓':open[i]?'▶':'🔒'}</b></button>`;
+  }).join('');
+  $$('.card').forEach(c=>c.onclick=()=>{
+    const l=+c.dataset.l;
+    if(l==2)fin();else start(l,p[l]>=LV[l].w.length?0:p[l]);
+  });
+}
+
+/* ===== Jogo ===== */
+function start(l,i){
+  G={l,i,w:LV[l].w[i],g:[],cur:'',k:{},busy:false};
+  go('game');
+  $('#info').textContent=`Nível ${l+1} · palavra ${i+1} de ${LV[l].w.length}`;
+  board();keys();
+}
+function board(){
+  const n=G.w.length,W=Math.min(innerWidth,460)-32;
+  const s=Math.max(26,Math.min(50,(W-(n-1)*4)/n,(innerHeight-320)/TRIES-4));
+  const b=$('#board');b.style.setProperty('--s',s+'px');
+  b.innerHTML=Array.from({length:TRIES},()=>`<div class="r">${'<i class="t"></i>'.repeat(n)}</div>`).join('');
+  G.g.forEach((g,r)=>paint(r,g,false));
+  draw();
+}
+function draw(){
+  const row=$$('#board .r')[G.g.length];if(!row)return;
+  [...row.children].forEach((e,i)=>{e.textContent=G.cur[i]||'';e.className='t'+(G.cur[i]?' f':'')});
+}
+function paint(r,g,anim){
+  const s=score(g,G.w),row=$$('#board .r')[r].children;
+  [...g].forEach((l,i)=>{
+    const e=row[i];e.textContent=l;
+    const set=()=>{e.className='t '+s[i]};
+    if(!anim){set();return}
+    setTimeout(()=>e.classList.add('sp'),i*260);
+    setTimeout(set,i*260+250);
+  });
+}
+function keys(){
+  const rows=[['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['ENTER','Z','X','C','V','B','N','M','⌫']];
+  $('#kb').innerHTML=rows.map(r=>`<div>${r.map(k=>`<button data-k="${k}" class="${G.k[k]||''}${k.length>1&&k!='⌫'?' w':''}">${k}</button>`).join('')}</div>`).join('');
+  $$('#kb button').forEach(b=>b.onclick=()=>{key(b.dataset.k);b.blur()});
+}
+function key(k){
+  if(!G||G.busy||!$('#ov').hidden)return;
+  if(k=='⌫')G.cur=G.cur.slice(0,-1);
+  else if(k=='ENTER'){
+    if(G.cur.length<G.w.length){
+      toast('Faltam letras');
+      const r=$$('#board .r')[G.g.length];r.classList.add('sh');setTimeout(()=>r.classList.remove('sh'),300);
+      return;
+    }
+    submit();return;
+  }
+  else if(/^[A-Z]$/.test(k)&&G.cur.length<G.w.length)G.cur+=k;
+  draw();
+}
+function submit(){
+  const g=G.cur,r=G.g.length,s=score(g,G.w);
+  G.g.push(g);G.cur='';G.busy=true;
+  paint(r,g,true);
+  setTimeout(()=>{
+    const o={g:3,y:2,x:1};
+    [...g].forEach((l,i)=>{if(!G.k[l]||o[s[i]]>o[G.k[l]])G.k[l]=s[i]});
+    keys();
+    if(g==G.w)setTimeout(win,600);
+    else if(G.g.length>=TRIES){
+      toast('Quase! Vamos de novo');
+      setTimeout(()=>{G.g=[];G.cur='';G.busy=false;board()},1400);
+    }else G.busy=false;
+  },(g.length-1)*260+550);
+}
+function win(){
+  const {l,i,w}=G,last=i==LV[l].w.length-1;
+  S.p[l]=Math.max(S.p[l],i+1);save();
+  let h=l==0
+    ?`<p>Presente desbloqueado 🎁</p><div class="big">${LV[0].ic[i]}</div><h2>${w}</h2>`
+    :last?`<p>Novo nível desbloqueado</p><div class="big">🔓</div>`
+    :`<p>Palavra encontrada</p><h2>${w}</h2>`;
+  h+=`<button class="btn" id="nx">${last&&l==1?'Abrir':'Continuar'}</button>`;
+  const o=$('#ov');o.innerHTML=`<div class="card2">${h}</div>`;o.hidden=false;
+  $('#nx').onclick=()=>{o.hidden=true;last?(l==1?fin():menu()):start(l,i+1)};
+}
+
+/* ===== Tela final ===== */
+function fin(){
+  go('fin');
+  const solved=['COMIGO','QUER','BRUNA','NAMORAR'],ord=['BRUNA','QUER','NAMORAR','COMIGO'];
+  const s=Math.min(36,(Math.min(innerWidth,460)-32-24)/7),H=s+12;
+  const st=$('#stage');st.style.cssText=`--s:${s}px;height:${H*4}px`;
+  st.innerHTML=solved.map((w,j)=>`<div class="w2" data-w="${w}" style="transform:translateY(${j*H}px)">${[...w].map(l=>`<i class="t x">${l}</i>`).join('')}${w=='COMIGO'?'<i class="t x q">?</i>':''}</div>`).join('');
+  $('#ring').classList.remove('on');resetNo();
+  setTimeout(()=>$$('.w2').forEach(e=>e.style.transform=`translateY(${ord.indexOf(e.dataset.w)*H}px)`),1000);
+  let c=0;
+  ord.forEach(w=>[...$(`.w2[data-w="${w}"]`).children].forEach(t=>{
+    const d=2400+c++*90;
+    setTimeout(()=>t.classList.add('sp'),d);
+    setTimeout(()=>{t.className='t g'},d+250);
+  }));
+  setTimeout(()=>$('#ring').classList.add('on'),2400+c*90+700);
+}
+$('#sim').onclick=()=>{
+  const y=$('#yes');y.hidden=false;
+  for(let i=0;i<50;i++){
+    const d=document.createElement('i');d.className='cf';
+    d.style.cssText=`left:${Math.random()*100}vw;background:${i%2?'var(--green)':'var(--yellow)'};animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*1.5}s`;
+    y.appendChild(d);
+  }
+};
+
+/* ===== Eventos ===== */
+const no=$('#nao'),nw=$('#nw');
+function resetNo(){no.style.cssText='';delete no.dataset.m;nw.style.cssText=''}
+function dodge(){
+  if(!no.dataset.m){
+    const r=no.getBoundingClientRect();
+    nw.style.width=r.width+'px';nw.style.height=r.height+'px';
+    no.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;z-index:3`;
+    no.dataset.m=1;void no.offsetWidth;
+  }
+  const w=no.offsetWidth,h=no.offsetHeight,p=12,s=$('#sim').getBoundingClientRect();
+  let x,y,n=0;
+  do{x=p+Math.random()*(innerWidth-w-2*p);y=p+Math.random()*(innerHeight-h-2*p);n++}
+  while(n<20&&x<s.right+16&&x+w>s.left-16&&y<s.bottom+16&&y+h>s.top-16);
+  no.style.left=x+'px';no.style.top=y+'px';
+}
+no.addEventListener('pointerenter',dodge);
+no.addEventListener('pointerdown',e=>{e.preventDefault();dodge()});
+no.onclick=()=>{dodge();toast('Nem tenta 😏')};
+$('#back').onclick=menu;
+addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey||$('#game').hidden)return;
+  const k=e.key.length==1?e.key.toUpperCase():e.key=='Backspace'?'⌫':e.key=='Enter'?'ENTER':'';
+  if(k){e.preventDefault();key(k)}
+});
+addEventListener('resize',()=>{if(G&&!$('#game').hidden)board()});
+
+Q.includes('final')?fin():menu();
+</script>
+</body>
+</html>
