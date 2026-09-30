@@ -6,9 +6,9 @@
 <title>Termo da Bruna</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#efe6dc;--empty:#e0d3c6;--tile:#6f6467;--ink:#2c2427;--key:#d6c8ba;--green:#3aa394;--yellow:#d3ad69;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#6d5b66;--empty:#5a4a53;--tile:#302a2c;--ink:#f6eef1;--key:#4b3f47}}
-:root[data-theme="dark"]{--bg:#6d5b66;--empty:#5a4a53;--tile:#302a2c;--ink:#f6eef1;--key:#4b3f47}
+:root{--bg:#efe6dc;--empty:#e0d3c6;--tile:#6f6467;--dim:#a89a93;--ink:#2c2427;--key:#d6c8ba;--green:#3aa394;--yellow:#d3ad69;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#6d5b66;--empty:#5a4a53;--tile:#302a2c;--dim:#473d41;--ink:#f6eef1;--key:#4b3f47}}
+:root[data-theme="dark"]{--bg:#6d5b66;--empty:#5a4a53;--tile:#302a2c;--dim:#473d41;--ink:#f6eef1;--key:#4b3f47}
 [hidden]{display:none!important}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;min-height:100svh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
@@ -26,9 +26,10 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 .r{display:flex;gap:4px}
 .t{width:var(--s);height:var(--s);display:grid;place-items:center;border-radius:5px;background:var(--empty);color:var(--ink);font-style:normal;font-weight:900;font-size:calc(var(--s)*.55);transition:transform .25s}
 .t.f{outline:2px solid var(--ink);outline-offset:-2px}
+.t.cur{box-shadow:0 0 0 3px var(--ink)}
 .t.g,.kb .g{background:var(--green);color:#fff}
 .t.y,.kb .y{background:var(--yellow);color:#fff}
-.t.x,.kb .x{background:var(--tile);color:#fff}
+.t.x,.kb .x{background:var(--dim);color:#fff}
 .sp{transform:rotateX(90deg)}
 .r.sh{animation:sh .3s}
 @keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -84,7 +85,7 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 </section>
 
 <div id="ov" hidden></div>
-<div id="yes" hidden><h2 style="font-size:34px">Eu te amo !!! 💚</h2></div>
+<div id="yes" hidden><h2 style="font-size:34px">Eu te amo!!!</h2></div>
 <div id="toast" hidden></div>
 
 <script>
@@ -129,7 +130,8 @@ function menu(){
 
 /* ===== Jogo ===== */
 function start(l,i){
-  G={l,i,w:LV[l].w[i],g:[],cur:'',k:{},busy:false};
+  const w=LV[l].w[i];
+  G={l,i,w,g:[],cur:Array(w.length).fill(''),pos:0,k:{},busy:false};
   go('game');
   $('#info').textContent=`Nível ${l+1} · palavra ${i+1} de ${LV[l].w.length}`;
   board();keys();
@@ -144,7 +146,7 @@ function board(){
 }
 function draw(){
   const row=$$('#board .r')[G.g.length];if(!row)return;
-  [...row.children].forEach((e,i)=>{e.textContent=G.cur[i]||'';e.className='t'+(G.cur[i]?' f':'')});
+  [...row.children].forEach((e,i)=>{e.textContent=G.cur[i]||'';e.className='t'+(G.cur[i]?' f':'')+(i==G.pos?' cur':'')});
 }
 function paint(r,g,anim){
   const s=score(g,G.w),row=$$('#board .r')[r].children;
@@ -163,21 +165,31 @@ function keys(){
 }
 function key(k){
   if(!G||G.busy||!$('#ov').hidden)return;
-  if(k=='⌫')G.cur=G.cur.slice(0,-1);
+  const n=G.w.length;
+  if(k=='⌫'){
+    if(G.cur[G.pos])G.cur[G.pos]='';
+    else if(G.pos>0){G.pos--;G.cur[G.pos]='';}
+  }
   else if(k=='ENTER'){
-    if(G.cur.length<G.w.length){
+    if(G.cur.some(c=>!c)){
       toast('Faltam letras');
       const r=$$('#board .r')[G.g.length];r.classList.add('sh');setTimeout(()=>r.classList.remove('sh'),300);
       return;
     }
     submit();return;
   }
-  else if(/^[A-Z]$/.test(k)&&G.cur.length<G.w.length)G.cur+=k;
+  else if(/^[A-Z]$/.test(k)){
+    G.cur[G.pos]=k;
+    let nxt=-1;
+    for(let i=G.pos+1;i<n;i++)if(!G.cur[i]){nxt=i;break}
+    if(nxt==-1)for(let i=0;i<n;i++)if(!G.cur[i]){nxt=i;break}
+    G.pos=nxt==-1?Math.min(G.pos+1,n-1):nxt;
+  }
   draw();
 }
 function submit(){
-  const g=G.cur,r=G.g.length,s=score(g,G.w);
-  G.g.push(g);G.cur='';G.busy=true;
+  const g=G.cur.join(''),r=G.g.length,s=score(g,G.w);
+  G.g.push(g);G.cur=Array(G.w.length).fill('');G.pos=0;G.busy=true;
   paint(r,g,true);
   setTimeout(()=>{
     const o={g:3,y:2,x:1};
@@ -186,7 +198,7 @@ function submit(){
     if(g==G.w)setTimeout(win,600);
     else if(G.g.length>=TRIES){
       toast('Quase! Vamos de novo');
-      setTimeout(()=>{G.g=[];G.cur='';G.busy=false;board()},1400);
+      setTimeout(()=>{G.g=[];G.cur=Array(G.w.length).fill('');G.pos=0;G.busy=false;board()},1400);
     }else G.busy=false;
   },(g.length-1)*260+550);
 }
@@ -229,6 +241,14 @@ $('#sim').onclick=()=>{
 };
 
 /* ===== Eventos ===== */
+$('#board').addEventListener('click',e=>{
+  if(!G||G.busy)return;
+  const t=e.target.closest('.t');if(!t)return;
+  const rows=$$('#board .r'),r=rows.indexOf(t.parentElement);
+  if(r!=G.g.length)return;
+  G.pos=[...t.parentElement.children].indexOf(t);
+  draw();
+});
 const no=$('#nao'),nw=$('#nw');
 function resetNo(){no.style.cssText='';delete no.dataset.m;nw.style.cssText=''}
 function dodge(){
