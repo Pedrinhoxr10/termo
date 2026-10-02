@@ -16,6 +16,7 @@ section{flex:1;display:flex;flex-direction:column;align-items:center;width:100%;
 h1{margin:18px 0 26px;font-weight:900;font-size:30px;letter-spacing:.06em;text-align:center}
 h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 #cards{width:100%}
+.reset{margin-top:20px;background:none;border:0;color:var(--ink);opacity:.5;font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 .card{width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 18px;margin-bottom:10px;border:0;border-radius:12px;background:var(--tile);color:#fff;font:inherit;font-weight:900;font-size:18px;text-align:left;cursor:pointer}
 .card small{display:block;font-size:13px;letter-spacing:.2em;opacity:.8;margin-top:2px}
 .card b{font-size:20px}
@@ -48,19 +49,47 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 .btns .btn{margin-top:0}
 .btn.no{background:var(--tile);transition:left .25s,top .25s}
 #ov,#yes{position:fixed;inset:0;z-index:5;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.55)}
-#yes{background:var(--bg);text-align:center}
+#yes{background:var(--bg);text-align:center;overflow:hidden}
+#heartsBg{position:absolute;inset:0;overflow:hidden;z-index:1}
+.hrt{position:absolute;bottom:-10%;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-120vh) rotate(360deg);opacity:0}}
+#loveText{position:relative;z-index:2;margin:0;display:flex;flex-wrap:wrap;justify-content:center;gap:1px;max-width:320px}
+#loveText span{display:inline-block;opacity:0;transform:scale(.4) translateY(16px);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes popIn{to{opacity:1;transform:scale(1) translateY(0)}}
 .card2{background:var(--bg);border-radius:16px;padding:26px 30px;text-align:center;max-width:320px}
 .card2 p{margin:0 0 8px;font-weight:800}
 .big{font-size:64px;line-height:1.1}
+.chest{position:relative;width:130px;height:100px;margin:8px auto 2px;cursor:pointer}
+.chest.shake{animation:unlock .38s ease}
+@keyframes unlock{0%,100%{transform:translateY(0) rotate(0)}20%{transform:translateY(-4px) rotate(-3deg)}40%{transform:translateY(0) rotate(3deg)}60%{transform:translateY(-3px) rotate(-2deg)}80%{transform:translateY(0) rotate(2deg)}}
+.chest .glow{position:absolute;inset:-34px;border-radius:50%;background:radial-gradient(circle,rgba(255,150,190,.65),transparent 70%);animation:pulse 1.6s ease-in-out infinite}
+.chest.open .glow{animation:none;opacity:1;transform:scale(1.5)}
+.chest .box{position:absolute;left:8px;right:8px;bottom:0;height:58px;background:linear-gradient(#e8a9bb,#c97a93);border:3px solid #7a3c54;border-radius:0 0 10px 10px}
+.chest .lid{position:absolute;left:4px;right:4px;top:12px;height:40px;background:linear-gradient(#f6d2d9,#e8a9bb);border:3px solid #7a3c54;border-radius:10px 10px 2px 2px;transform-origin:bottom center;transition:transform .6s cubic-bezier(.34,1.56,.64,1)}
+.chest.open .lid{transform:rotateX(-125deg)}
+.chest .clasp{position:absolute;left:50%;top:36px;transform:translateX(-50%);font-size:16px;line-height:1;color:#e8536f}
+.chest .spark{position:absolute;font-size:16px;animation:floaty 2.4s ease-in-out infinite}
+.chest.open .spark{display:none}
+.spark.s1{left:-8px;top:4px}
+.spark.s2{right:-10px;top:-2px}
+.spark.s3{left:48%;top:-16px;animation-delay:.6s}
+@keyframes pulse{0%,100%{transform:scale(.9);opacity:.6}50%{transform:scale(1.15);opacity:1}}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(10deg)}}
+.hb{position:absolute;left:50%;top:55%;font-size:17px;opacity:0;animation:hburst .9s ease-out forwards}
+@keyframes hburst{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}18%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.1) rotate(var(--rot))}}
+.tap{margin-top:8px;font-weight:800;opacity:.75;animation:blinktap 1.4s infinite}
+@keyframes blinktap{50%{opacity:.3}}
+.gift{font-size:60px;line-height:1;margin:4px 0}
+.gift svg{width:76px;height:76px}
 #toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 16px);left:50%;transform:translateX(-50%);z-index:9;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;font-weight:800}
 .cf{position:fixed;top:-14px;width:10px;height:10px;border-radius:2px;animation:fall linear both}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
-@media (prefers-reduced-motion:reduce){.w2,.ring,.t{transition:none}}
+@media (prefers-reduced-motion:reduce){.w2,.ring,.t{transition:none}.hrt{display:none}#loveText span{animation:none;opacity:1;transform:none}.chest .glow,.chest .spark,.tap,.chest.shake{animation:none}.hb{display:none}}
 </style>
 </head>
 <body>
 
-<section id="menu"><h1>TERMO DA BRUNA</h1><div id="cards"></div></section>
+<section id="menu"><h1>TERMO DA BRUNA</h1><div id="cards"></div><button id="rst" class="reset">Reiniciar progresso</button></section>
 
 <section id="game" hidden>
   <div class="top"><button id="back" aria-label="Voltar">←</button><span id="info"></span></div>
@@ -85,17 +114,34 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 </section>
 
 <div id="ov" hidden></div>
-<div id="yes" hidden><h2 style="font-size:34px">Eu te amo!!!</h2></div>
+<div id="yes" hidden><div id="heartsBg"></div><h2 id="loveText" style="font-size:38px"></h2></div>
 <div id="toast" hidden></div>
 
 <script>
 /* ===== Configuração =====
    Para testar: abra o arquivo com ?final (vai direto à tela final) ou ?reset (zera o progresso). */
 const LV=[
-  {w:['URSINHO','FLORES','BEIJO'],ic:['🧸','💐','😘']},
+  {w:['URSINHO','BEIJO','FLORES']},
   {w:['COMIGO','QUER','BRUNA','NAMORAR']}
 ];
 const TRIES=9;
+
+/* Buquê azul/branco desenhado na mão (ilustração simples, sem direitos de terceiros) */
+function flower(x,y,r){
+  let g=`<g transform="translate(${x} ${y})">`;
+  for(let a=0;a<360;a+=72)g+=`<ellipse rx="${r}" ry="${r*.6}" transform="rotate(${a}) translate(0 -${(r*.62).toFixed(1)})" fill="#bcdcf5"/>`;
+  g+=`<circle r="${(r*.4).toFixed(1)}" fill="#fff" stroke="#4f86d6" stroke-width="1.2"/></g>`;
+  return g;
+}
+const BOUQUET=`<svg viewBox="0 0 100 100" width="100%" height="100%">
+<path d="M30 92 L70 92 L82 58 L18 58 Z" fill="#fff" stroke="#4f86d6" stroke-width="3"/>
+<rect x="18" y="68" width="64" height="7" fill="#4f86d6"/>
+<line x1="42" y1="58" x2="36" y2="30" stroke="#5b8a4f" stroke-width="3"/>
+<line x1="50" y1="58" x2="50" y2="22" stroke="#5b8a4f" stroke-width="3"/>
+<line x1="58" y1="58" x2="64" y2="30" stroke="#5b8a4f" stroke-width="3"/>
+${flower(36,26,11)}${flower(50,17,13)}${flower(64,26,11)}
+</svg>`;
+const GIFTS=['🧸','😘',BOUQUET];
 
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 let S={p:[0,0]},G=null;
@@ -202,16 +248,52 @@ function submit(){
     }else G.busy=false;
   },(g.length-1)*260+550);
 }
+function nextStep(l,i,last){
+  $('#ov').hidden=true;
+  if(last)(l==1?fin():menu());
+  else start(l,i+1);
+}
 function win(){
   const {l,i,w}=G,last=i==LV[l].w.length-1;
   S.p[l]=Math.max(S.p[l],i+1);save();
-  let h=l==0
-    ?`<p>Presente desbloqueado 🎁</p><div class="big">${LV[0].ic[i]}</div><h2>${w}</h2>`
-    :last?`<p>Novo nível desbloqueado</p><div class="big">🔓</div>`
-    :`<p>Palavra encontrada</p><h2>${w}</h2>`;
+  const o=$('#ov');o.hidden=false;
+  if(l==0){
+    o.innerHTML=`<div class="card2 chestcard">
+      <div class="chest" id="chest">
+        <div class="glow"></div>
+        <div class="spark s1">✨</div><div class="spark s2">💗</div><div class="spark s3">✨</div>
+        <div class="box"></div><div class="lid"></div><div class="clasp">❤</div>
+      </div>
+      <p class="tap">Toque para abrir</p>
+    </div>`;
+    $('#chest').onclick=()=>{
+      const chest=$('#chest');
+      if(chest.classList.contains('shake')||chest.classList.contains('open'))return;
+      chest.classList.add('shake');
+      setTimeout(()=>{
+        chest.classList.remove('shake');
+        chest.classList.add('open');
+        for(let k=0;k<8;k++){
+          const h=document.createElement('i');h.className='hb';
+          h.textContent=['💗','💕','💖'][k%3];
+          h.style.setProperty('--dx',(Math.random()*80-40)+'px');
+          h.style.setProperty('--dy',(-60-Math.random()*50)+'px');
+          h.style.setProperty('--rot',(Math.random()*60-30)+'deg');
+          h.style.animationDelay=(k*55)+'ms';
+          chest.appendChild(h);
+        }
+      },380);
+      setTimeout(()=>{
+        $('.chestcard').innerHTML=`<p>Presente desbloqueado 🎁</p><div class="gift">${GIFTS[i]}</div><h2>${w}</h2><button class="btn" id="nx">Continuar</button>`;
+        $('#nx').onclick=()=>nextStep(l,i,last);
+      },380+900);
+    };
+    return;
+  }
+  let h=last?`<p>Novo nível desbloqueado</p><div class="big">🔓</div>`:`<p>Palavra encontrada</p><h2>${w}</h2>`;
   h+=`<button class="btn" id="nx">${last&&l==1?'Abrir':'Continuar'}</button>`;
-  const o=$('#ov');o.innerHTML=`<div class="card2">${h}</div>`;o.hidden=false;
-  $('#nx').onclick=()=>{o.hidden=true;last?(l==1?fin():menu()):start(l,i+1)};
+  o.innerHTML=`<div class="card2">${h}</div>`;
+  $('#nx').onclick=()=>nextStep(l,i,last);
 }
 
 /* ===== Tela final ===== */
@@ -232,10 +314,22 @@ function fin(){
   setTimeout(()=>$('#ring').classList.add('on'),2400+c*90+700);
 }
 $('#sim').onclick=()=>{
-  const y=$('#yes');y.hidden=false;
+  const y=$('#yes'),cols=['#4f86d6','#ffffff','#caa052'];
+  $('#loveText').innerHTML=[...'Eu te amo!!!'].map((c,i)=>c==' '?' ':`<span style="animation-delay:${i*70}ms">${c}</span>`).join('');
+  const bg=$('#heartsBg');bg.innerHTML='';
+  const em=['💙','🤍','💙','🤍','✨'];
+  for(let i=0;i<24;i++){
+    const h=document.createElement('span');h.className='hrt';h.textContent=em[i%em.length];
+    h.style.left=Math.random()*100+'%';
+    h.style.fontSize=(14+Math.random()*16)+'px';
+    h.style.animationDuration=(5+Math.random()*5)+'s';
+    h.style.animationDelay=(Math.random()*5)+'s';
+    bg.appendChild(h);
+  }
+  y.hidden=false;
   for(let i=0;i<50;i++){
     const d=document.createElement('i');d.className='cf';
-    d.style.cssText=`left:${Math.random()*100}vw;background:${i%2?'var(--green)':'var(--yellow)'};animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*1.5}s`;
+    d.style.cssText=`left:${Math.random()*100}vw;background:${cols[i%3]};animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*1.5}s`;
     y.appendChild(d);
   }
 };
@@ -268,6 +362,7 @@ no.addEventListener('pointerenter',dodge);
 no.addEventListener('pointerdown',e=>{e.preventDefault();dodge()});
 no.onclick=()=>{dodge();toast('Nem tenta 😏')};
 $('#back').onclick=menu;
+$('#rst').onclick=()=>{if(confirm('Reiniciar todo o progresso do zero? Os níveis seguintes voltam a ficar trancados.')){S={p:[0,0]};save();menu();}};
 addEventListener('keydown',e=>{
   if(e.ctrlKey||e.metaKey||e.altKey||$('#game').hidden)return;
   const k=e.key.length==1?e.key.toUpperCase():e.key=='Backspace'?'⌫':e.key=='Enter'?'ENTER':'';
