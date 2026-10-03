@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Termo da Bruna</title>
+<title>Termo</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#efe6dc;--empty:#e0d3c6;--tile:#6f6467;--dim:#a89a93;--ink:#2c2427;--key:#d6c8ba;--green:#3aa394;--yellow:#d3ad69;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -13,7 +13,8 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;min-height:100svh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
 section{flex:1;display:flex;flex-direction:column;align-items:center;width:100%;max-width:460px;margin:0 auto;padding:12px 16px 16px;box-sizing:border-box}
-h1{margin:18px 0 26px;font-weight:900;font-size:30px;letter-spacing:.06em;text-align:center}
+h1{margin:18px 0 4px;font-weight:900;font-size:30px;letter-spacing:.06em;text-align:center}
+.slogan{margin:0 0 24px;text-align:center;font-weight:700;font-size:14px;font-style:italic;opacity:.65}
 h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 #cards{width:100%}
 .reset{margin-top:20px;background:none;border:0;color:var(--ink);opacity:.5;font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
@@ -41,7 +42,8 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 #stage{position:relative;width:100%;margin-top:34px}
 .w2{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:4px;transition:transform .9s cubic-bezier(.4,0,.2,1)}
 .q{opacity:0}
-.ring{opacity:0;transition:opacity .9s;text-align:center;margin-top:34px}
+.ring{position:relative;opacity:0;transition:opacity .9s;text-align:center;margin-top:34px}
+.ring .shine{filter:drop-shadow(0 0 10px rgba(79,184,229,.7))}
 .ring.on{opacity:1}
 .btn{font:inherit;font-weight:900;font-size:18px;color:#fff;background:var(--green);border:0;border-radius:10px;padding:12px 36px;margin-top:16px;cursor:pointer}
 .ring:not(.on){pointer-events:none}
@@ -49,13 +51,34 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 .btns .btn{margin-top:0}
 .btn.no{background:var(--tile);transition:left .25s,top .25s}
 #ov,#yes{position:fixed;inset:0;z-index:5;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.55)}
-#yes{background:var(--bg);text-align:center;overflow:hidden}
+#yes{background:var(--bg);text-align:center;overflow:hidden;padding-bottom:clamp(64px,11vh,120px)}
 #heartsBg{position:absolute;inset:0;overflow:hidden;z-index:1}
+.ground{position:absolute;left:0;right:0;bottom:0;height:clamp(64px,11vh,120px);z-index:0;
+  background-image:
+    linear-gradient(135deg,transparent 50%,#6fbf4a 50%),
+    linear-gradient(225deg,transparent 50%,#6fbf4a 50%),
+    linear-gradient(180deg,#6fbf4a,#2f6b26);
+  background-position:0 0,11px 0,0 0;
+  background-size:22px 22px,22px 22px,100% 100%;
+  background-repeat:repeat-x,repeat-x,no-repeat}
+.blade{position:absolute;bottom:0;width:7px;clip-path:polygon(50% 0,0 100%,100% 100%);transform-origin:bottom center}
 .hrt{position:absolute;bottom:-10%;animation:rise linear infinite}
 @keyframes rise{to{transform:translateY(-120vh) rotate(360deg);opacity:0}}
-#loveText{position:relative;z-index:2;margin:0;display:flex;flex-wrap:wrap;justify-content:center;gap:1px;max-width:320px}
+#loveText{position:relative;z-index:2;margin:0;text-align:center;max-width:320px}
 #loveText span{display:inline-block;opacity:0;transform:scale(.4) translateY(16px);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) forwards}
 @keyframes popIn{to{opacity:1;transform:scale(1) translateY(0)}}
+.finwrap{position:relative;z-index:2;opacity:0;animation:fadein .6s ease forwards;animation-delay:1.3s}
+@keyframes fadein{to{opacity:1}}
+.finring{position:relative;z-index:2;margin-top:4px;opacity:0;transform:scale(.6)}
+.finring.on{animation:ringpop .7s ease forwards}
+.frow{display:flex;align-items:center;justify-content:center;gap:16px}
+.fr-bouquet{width:94px;height:94px}
+.shine{filter:drop-shadow(0 0 10px rgba(79,184,229,.7))}
+@keyframes ringpop{to{opacity:1;transform:scale(1)}}
+.tw{position:absolute;font-size:14px;animation:twinkle 1.6s ease-in-out infinite}
+.tw.t1{top:4px;left:26%;animation-delay:.3s}
+.tw.t2{top:14px;right:22%;animation-delay:.9s}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.6)}50%{opacity:1;transform:scale(1.15)}}
 .card2{background:var(--bg);border-radius:16px;padding:26px 30px;text-align:center;max-width:320px}
 .card2 p{margin:0 0 8px;font-weight:800}
 .big{font-size:64px;line-height:1.1}
@@ -84,12 +107,12 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 #toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 16px);left:50%;transform:translateX(-50%);z-index:9;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;font-weight:800}
 .cf{position:fixed;top:-14px;width:10px;height:10px;border-radius:2px;animation:fall linear both}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
-@media (prefers-reduced-motion:reduce){.w2,.ring,.t{transition:none}.hrt{display:none}#loveText span{animation:none;opacity:1;transform:none}.chest .glow,.chest .spark,.tap,.chest.shake{animation:none}.hb{display:none}}
+@media (prefers-reduced-motion:reduce){.w2,.ring,.t{transition:none}.hrt{display:none}#loveText span{animation:none;opacity:1;transform:none}.chest .glow,.chest .spark,.tap,.chest.shake{animation:none}.hb{display:none}.finring.on{animation:none;opacity:1;transform:none}.finwrap{animation:none;opacity:1}.tw{animation:none}}
 </style>
 </head>
 <body>
 
-<section id="menu"><h1>TERMO DA BRUNA</h1><div id="cards"></div><button id="rst" class="reset">Reiniciar progresso</button></section>
+<section id="menu"><h1>TERMO</h1><p class="slogan">Até onde uma palavra pode te levar?</p><div id="cards"></div><button id="rst" class="reset">Reiniciar progresso</button></section>
 
 <section id="game" hidden>
   <div class="top"><button id="back" aria-label="Voltar">←</button><span id="info"></span></div>
@@ -100,11 +123,13 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 <section id="fin" hidden>
   <div id="stage"></div>
   <div class="ring" id="ring">
-    <svg width="120" height="120" viewBox="0 0 120 120" aria-label="Aliança">
+    <div class="tw t1">✨</div><div class="tw t2">✨</div>
+    <svg class="shine" width="120" height="120" viewBox="0 0 120 120" aria-label="Aliança com pedra azul">
       <circle cx="60" cy="76" r="30" fill="none" stroke="#c99a2e" stroke-width="9"/>
       <circle cx="60" cy="76" r="30" fill="none" stroke="#f3d580" stroke-width="2" stroke-dasharray="70 120"/>
-      <polygon points="60,20 74,34 60,52 46,34" fill="#bfe9f5" stroke="#fff" stroke-width="2"/>
-      <polyline points="46,34 74,34" stroke="#fff" stroke-width="1.5" fill="none"/>
+      <polygon points="60,18 76,36 60,56 44,36" fill="#4fb8e5"/>
+      <polygon points="60,18 76,36 60,40 44,36" fill="#bfe9f5"/>
+      <polyline points="44,36 76,36" stroke="#fff" stroke-width="1.5" fill="none"/>
     </svg><br>
     <div class="btns">
       <button class="btn" id="sim">SIM</button>
@@ -114,17 +139,52 @@ h2{margin:6px 0;font-weight:900;letter-spacing:.08em}
 </section>
 
 <div id="ov" hidden></div>
-<div id="yes" hidden><div id="heartsBg"></div><h2 id="loveText" style="font-size:38px"></h2></div>
+<div id="yes" hidden>
+  <div class="ground">
+    <i class="blade" style="left:6%;height:30px;background:#8fd666;transform:rotate(-8deg)"></i>
+    <i class="blade" style="left:14%;height:20px;background:#5fa83c;transform:rotate(10deg)"></i>
+    <i class="blade" style="left:26%;height:34px;background:#79c955;transform:rotate(-4deg)"></i>
+    <i class="blade" style="left:38%;height:18px;background:#8fd666;transform:rotate(14deg)"></i>
+    <i class="blade" style="left:52%;height:28px;background:#5fa83c;transform:rotate(-12deg)"></i>
+    <i class="blade" style="left:64%;height:22px;background:#79c955;transform:rotate(6deg)"></i>
+    <i class="blade" style="left:76%;height:32px;background:#8fd666;transform:rotate(-6deg)"></i>
+    <i class="blade" style="left:88%;height:20px;background:#5fa83c;transform:rotate(12deg)"></i>
+  </div>
+  <div id="heartsBg"></div>
+  <h2 id="loveText" style="font-size:38px"></h2>
+  <div class="finwrap" id="finwrap">
+    <div class="chest" id="finchest">
+      <div class="glow"></div>
+      <div class="spark s1">✨</div><div class="spark s2">💗</div><div class="spark s3">✨</div>
+      <div class="box"></div><div class="lid"></div><div class="clasp">❤</div>
+    </div>
+    <p class="tap">Toque para abrir</p>
+  </div>
+  <div class="finring" id="finring">
+    <div class="tw t1">✨</div><div class="tw t2">✨</div>
+    <div class="frow">
+      <svg class="shine" width="114" height="114" viewBox="0 0 120 120" aria-label="Aliança com pedra azul">
+        <circle cx="60" cy="80" r="28" fill="none" stroke="#c99a2e" stroke-width="8"/>
+        <circle cx="60" cy="80" r="28" fill="none" stroke="#f3d580" stroke-width="2" stroke-dasharray="60 110"/>
+        <polygon points="60,26 76,42 60,60 44,42" fill="#4fb8e5"/>
+        <polygon points="60,26 76,42 60,46 44,42" fill="#bfe9f5"/>
+        <polyline points="44,42 76,42" stroke="#fff" stroke-width="1.5" fill="none"/>
+      </svg>
+      <div class="fr-bouquet shine" id="bouquetSlot"></div>
+    </div>
+  </div>
+</div>
 <div id="toast" hidden></div>
 
 <script>
 /* ===== Configuração =====
    Para testar: abra o arquivo com ?final (vai direto à tela final) ou ?reset (zera o progresso). */
 const LV=[
-  {w:['URSINHO','BEIJO','FLORES']},
+  {w:['URSINHO','BEIJO','MAGIA']},
   {w:['COMIGO','QUER','BRUNA','NAMORAR']}
 ];
 const TRIES=9;
+const GIFTS=['🧸','😘','🪄'];
 
 /* Buquê azul/branco desenhado na mão (ilustração simples, sem direitos de terceiros) */
 function flower(x,y,r){
@@ -134,14 +194,23 @@ function flower(x,y,r){
   return g;
 }
 const BOUQUET=`<svg viewBox="0 0 100 100" width="100%" height="100%">
-<path d="M30 92 L70 92 L82 58 L18 58 Z" fill="#fff" stroke="#4f86d6" stroke-width="3"/>
-<rect x="18" y="68" width="64" height="7" fill="#4f86d6"/>
-<line x1="42" y1="58" x2="36" y2="30" stroke="#5b8a4f" stroke-width="3"/>
-<line x1="50" y1="58" x2="50" y2="22" stroke="#5b8a4f" stroke-width="3"/>
-<line x1="58" y1="58" x2="64" y2="30" stroke="#5b8a4f" stroke-width="3"/>
-${flower(36,26,11)}${flower(50,17,13)}${flower(64,26,11)}
+<path d="M26 94 L74 94 L88 55 L12 55 Z" fill="#fff" stroke="#4f86d6" stroke-width="3"/>
+<path d="M34 92 L44 56" stroke="#dbe9f7" stroke-width="2" fill="none"/>
+<path d="M66 92 L56 56" stroke="#dbe9f7" stroke-width="2" fill="none"/>
+<path d="M50 55 Q40 40 32 22" stroke="#5b8a4f" stroke-width="3" fill="none"/>
+<path d="M50 55 Q45 38 42 18" stroke="#5b8a4f" stroke-width="3" fill="none"/>
+<path d="M50 55 Q50 35 50 14" stroke="#5b8a4f" stroke-width="3" fill="none"/>
+<path d="M50 55 Q55 38 58 18" stroke="#5b8a4f" stroke-width="3" fill="none"/>
+<path d="M50 55 Q60 40 68 22" stroke="#5b8a4f" stroke-width="3" fill="none"/>
+<ellipse cx="38" cy="44" rx="6" ry="3" fill="#6fa05c" transform="rotate(-35 38 44)"/>
+<ellipse cx="62" cy="44" rx="6" ry="3" fill="#6fa05c" transform="rotate(35 62 44)"/>
+${flower(32,22,9)}${flower(42,18,10)}${flower(50,14,12)}${flower(58,18,10)}${flower(68,22,9)}
+<g transform="translate(50 74)">
+  <polygon points="0,0 -13,-8 -13,8" fill="#4f86d6"/>
+  <polygon points="0,0 13,-8 13,8" fill="#4f86d6"/>
+  <rect x="-5" y="-5" width="10" height="10" rx="2" fill="#2f5fa8"/>
+</g>
 </svg>`;
-const GIFTS=['🧸','😘',BOUQUET];
 
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 let S={p:[0,0]},G=null;
@@ -313,8 +382,32 @@ function fin(){
   }));
   setTimeout(()=>$('#ring').classList.add('on'),2400+c*90+700);
 }
+function openFinChest(){
+  const c=$('#finchest');
+  if(c.classList.contains('shake')||c.classList.contains('open'))return;
+  c.classList.add('shake');
+  setTimeout(()=>{
+    c.classList.remove('shake');
+    c.classList.add('open');
+    for(let k=0;k<8;k++){
+      const h=document.createElement('i');h.className='hb';
+      h.textContent=['💗','💕','💖'][k%3];
+      h.style.setProperty('--dx',(Math.random()*80-40)+'px');
+      h.style.setProperty('--dy',(-60-Math.random()*50)+'px');
+      h.style.setProperty('--rot',(Math.random()*60-30)+'deg');
+      h.style.animationDelay=(k*55)+'ms';
+      c.appendChild(h);
+    }
+  },380);
+  setTimeout(()=>{
+    $('#finwrap').hidden=true;
+    $('#finring').classList.add('on');
+  },380+900);
+}
 $('#sim').onclick=()=>{
   const y=$('#yes'),cols=['#4f86d6','#ffffff','#caa052'];
+  const c=$('#finchest');c.className='chest';c.querySelectorAll('.hb').forEach(h=>h.remove());
+  $('#finwrap').hidden=false;$('#finring').classList.remove('on');
   $('#loveText').innerHTML=[...'Eu te amo!!!'].map((c,i)=>c==' '?' ':`<span style="animation-delay:${i*70}ms">${c}</span>`).join('');
   const bg=$('#heartsBg');bg.innerHTML='';
   const em=['💙','🤍','💙','🤍','✨'];
@@ -361,6 +454,7 @@ function dodge(){
 no.addEventListener('pointerenter',dodge);
 no.addEventListener('pointerdown',e=>{e.preventDefault();dodge()});
 no.onclick=()=>{dodge();toast('Nem tenta 😏')};
+$('#finchest').onclick=openFinChest;
 $('#back').onclick=menu;
 $('#rst').onclick=()=>{if(confirm('Reiniciar todo o progresso do zero? Os níveis seguintes voltam a ficar trancados.')){S={p:[0,0]};save();menu();}};
 addEventListener('keydown',e=>{
@@ -370,6 +464,7 @@ addEventListener('keydown',e=>{
 });
 addEventListener('resize',()=>{if(G&&!$('#game').hidden)board()});
 
+$('#bouquetSlot').innerHTML=BOUQUET;
 Q.includes('final')?fin():menu();
 </script>
 </body>
